@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import getopt
 import re
 
 def check_indent(str):
@@ -12,13 +13,53 @@ def check_indent(str):
 def reindent(level, str):
     return " " * level + str
 
-def main(argv):
-    # file = open(sys.argv[0], 'w')
-    file = sys.stdout
+def help(self):
+    print "Usage: " + self + " [options] file"
+    print "  Options:"
+    print "    -o file, --output file  send output to file.  default is stdout"
+    print "    -h,      --help         print this help message"
+    print "  if file is '-' " + self + " will read from stdin."
+
+def load(self, argv):
+    try:
+        opts, args = getopt.getopt(argv, "o:h", ["output", "help"])
+    except getopt.GetoptError as err:
+        print err
+        sys.exit(1)
+
+    outfile = sys.stdout
+    for opt, arg in opts:
+        if opt in ("-o", "--output"):
+            outfile = arg
+        if opt in ("-h", "--help"):
+            help(self)
+            sys.exit(0)
+
+    if len(args) < 1:
+        print "More args!"
+        sys.exit(1)
+    elif len(args) > 1:
+        print "No!  Too much arg!"
+        sys.exit(1)
+    else:
+        if args[0] == "-":
+            infile = sys.stdin
+        else:
+            try:
+                infile = open(args[0])
+            except IOError:
+                print "Not a real file. > <"
+                sys.exit(2)
+
+    return (infile, outfile)
+
+
+def main():
+    infile, outfile = load(sys.argv[0], sys.argv[1:])
 
     # main loop
     markdown = ""
-    for line in sys.stdin:
+    for line in infile:
         line = line[:-1] # strip newl
 
         # skip blanks, but keep the spacing
@@ -30,7 +71,7 @@ def main(argv):
         (level, line) = check_indent(line)
 
         # headers
-        # georgeheaders are denoted by a terminal space.  replace this with
+        # georgeheaders are denoted by a terminal colon.  replace this with
         # an initial octothorpe
         if line[-1] == ":":
             line = "#" + "#" * level + " " + line[0:-1]
@@ -54,7 +95,7 @@ def main(argv):
         line += "\n" # reinsert newl
         markdown += line
 
-    file.write(markdown)
+    outfile.write(markdown)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
