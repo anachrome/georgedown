@@ -30,7 +30,7 @@ def load(self, argv):
     outfile = sys.stdout
     for opt, arg in opts:
         if opt in ("-o", "--output"):
-            outfile = arg
+            outfile = open(arg, "w")
         if opt in ("-h", "--help"):
             help(self)
             sys.exit(0)
@@ -46,7 +46,7 @@ def load(self, argv):
             infile = sys.stdin
         else:
             try:
-                infile = open(args[0])
+                infile = open(args[0], "r")
             except IOError:
                 print "Not a real file. > <"
                 sys.exit(2)
