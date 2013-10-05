@@ -1,4 +1,4 @@
-A converter between george's mordbid markdown-approximate and decent, proper
+A converter between george's mordid markdown-approximate and decent, proper
 markdown.
 
 ## Usage
