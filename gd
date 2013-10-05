@@ -5,10 +5,10 @@ import getopt
 import re
 
 def check_indent(str):
+    i = 0 # default case -- empty string
     for i,c in enumerate(str):
-        if c != ' ':
-            return i, str[i:]
-    return (i, "") # if all spaces
+        if c != ' ': break
+    return i, str[i:]
 
 def reindent(level, str):
     return " " * level + str
@@ -89,6 +89,12 @@ def main():
         # autolink email
         line = re.sub(r"\b([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})\b",
                       r"[\1](mailto:\1)", line, 0, re.IGNORECASE)
+
+        # autolink links
+        link1 = r"\b[A-Z0-9]+\.[A-Z0-9]+\.[A-Z0-9]+(\.[A-Z0-9]+)?\b"
+        link2 = r"\b(http|ftp|irc)://[^ ]+\b"
+        line = re.sub("(" + link1 + "|" + link2 + ")",
+                      r"[\1](\1)", line, 0, re.IGNORECASE)
 
         # links
 
