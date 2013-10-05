@@ -62,13 +62,13 @@ def main():
     for line in infile:
         line = line[:-1] # strip newl
 
+        # handle indent
+        (level, line) = check_indent(line)
+
         # skip blanks, but keep the spacing
         if line == "":
             markdown += "\n"
             continue
-
-        # handle indent
-        (level, line) = check_indent(line)
 
         # headers
         # georgeheaders are denoted by a terminal colon.  replace this with
